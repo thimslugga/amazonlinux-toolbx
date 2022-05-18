@@ -1,4 +1,4 @@
-FROM docker.io/library/amazonlinux:2
+FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
 ENV NAME=amznlinux2-toolbox VERSION=2
 LABEL com.github.containers.toolbox="true" \
@@ -12,17 +12,17 @@ COPY README.md /
 
 RUN sed -i '/tsflags=nodocs/d' /etc/yum.conf
 
-COPY missing-docs /
-RUN yum -y reinstall $(<missing-docs)
-RUN rm /missing-docs
-
 COPY packages /
 RUN yum -y install $(<packages)
 
 COPY extra-packages /
 RUN amazon-linux-extras install -y $(<extra-packages)
 
-RUN rm /{packages,extra-packages}
+COPY missing-docs /
+RUN yum -y reinstall $(<missing-docs)
+
+RUN rm /{packages,extra-packages,missing-docs}
+
 RUN yum clean all
 
 RUN sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers
