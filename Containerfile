@@ -1,6 +1,6 @@
 FROM docker.io/library/amazonlinux:2
 
-ENV NAME=amazon-linux-2-toolbox VERSION=2
+ENV NAME=amznlinux2-toolbox VERSION=2
 LABEL com.github.containers.toolbox="true" \
   com.github.debarshiray.toolbox="true" \
   name="$NAME" \
