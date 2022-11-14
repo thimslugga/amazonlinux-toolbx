@@ -1,4 +1,4 @@
-# justfile
+:# justfile
 
 default:
   @just --summary

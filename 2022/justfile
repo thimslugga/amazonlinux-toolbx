@@ -6,23 +6,20 @@ default:
 help:
   @just --list
 
-#alias mb := make-both
-#make-both: build-2 create-2 build-2022 create-2022
-
 alias m := make
-make-both: build create
+make: build create
   
 alias b := build
 build:
   podman build -t amazonlinux-toolbox:2022 -f Containerfile .
 
-alias e := enter
-enter:
-  toolbox enter amazonlinux-toolbox-2022
-
 alias c := create
 create:
   toolbox create -c amazonlinux-toolbox-2022 -i amazonlinux-toolbox:2022
+
+alias e := enter
+enter:
+  toolbox enter amazonlinux-toolbox-2022
 
 alias cu := cleanup
 cleanup:
