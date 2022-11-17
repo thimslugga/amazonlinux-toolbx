@@ -33,16 +33,16 @@ database, etc..
 
 ### Create your toolbox container:
 ```
-[user@hostname ~]$ podman build . -t amznlinux2022-toolbox
-[user@hostname ~]$ toolbox create azmnlinux2022-toolbox
-Created container: amznlinux2022-toolbox
-Enter with: toolbox enter amznlinux2022-toolbox
+[user@hostname ~]$ podman build . -t amazonlinux-toolbox:2022
+[user@hostname ~]$ toolbox create amazonlinux-toolbox-2022
+Created container: amazonlinux-toolbox-2022
+Enter with: toolbox enter amazonlinux-toolbox-2022
 [user@hostname ~]$
 ```
-This will create a container called `amznlinux2022-toolbox`.
+This will create a container called `amazonlinux-toolbox-2022`.
 
 ### Enter the toolbox:
 ```
-[user@hostname ~]$ toolbox enter amznlinux2022-toolbox
+[user@hostname ~]$ toolbox enter amazonlinux-toolbox-2022
 ⬢[user@toolbox ~]$
 ```

@@ -12,16 +12,16 @@ The toolbox environment is based on an [OCI](https://www.opencontainers.org/) im
 
 ### Create your toolbox container:
 ```
-[user@hostname ~]$ podman build . -t amznlinux2-toolbox
-[user@hostname ~]$ toolbox create azmnlinux2-toolbox
-Created container: amznlinux2-toolbox
-Enter with: toolbox enter amznlinux2-toolbox
+[user@hostname ~]$ podman build . -t amazonlinux-toolbox:2
+[user@hostname ~]$ toolbox create amazonlinux-toolbox-2
+Created container: amazonlinux-toolbox-2
+Enter with: toolbox enter amazonlinux-toolbox-2
 [user@hostname ~]$
 ```
-This will create a container called `amznlinux2-toolbox`.
+This will create a container called `amazonlinux-toolbox-2`.
 
 ### Enter the toolbox:
 ```
-[user@hostname ~]$ toolbox enter amznlinux2-toolbox
+[user@hostname ~]$ toolbox enter amazonlinux-toolbox-2
 ⬢[user@toolbox ~]$
 ```
