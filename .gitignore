@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,windows
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,windows
+# First, ignore everything.
+#/*
 
 ### Linux ###
 *~
@@ -17,6 +17,7 @@
 .nfs*
 
 ### macOS ###
+
 # General
 .DS_Store
 .AppleDouble
@@ -44,11 +45,11 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-### macOS Patch ###
 # iCloud generated files
 *.icloud
 
 ### Windows ###
+
 # Windows thumbnail cache files
 Thumbs.db
 Thumbs.db:encryptable
@@ -73,5 +74,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-# End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows

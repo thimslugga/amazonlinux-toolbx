@@ -1,8 +1,8 @@
-FROM public.ecr.aws/amazonlinux/amazonlinux:2022
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 LABEL com.github.containers.toolbox="true" \
   name="amazonlinux-toolbox" \
-  version="2022" \
+  version="2023" \
   usage="This image is meant to be used with the toolbox command" \
   summary="Base image for creating Amazon Linux toolbx containers" \
   maintainer="Adam Kaminski <adam@adamkaminski.com>"
@@ -12,15 +12,15 @@ COPY missing-docs extra-packages /
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 RUN dnf -y swap coreutils-single coreutils-full && \
   dnf -y reinstall $(<missing-docs) && \
-  dnf -y install $(<extra-packages) && \
-  dnf -y upgrade && \
+  dnf -y install --allowerasing $(<extra-packages) && \
+  dnf -y upgrade --releasever=latest && \
   dnf clean all
 
 # Passwordless sudo
 RUN sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers
-RUN echo 'Defaults lecture="never"' > /etc/sudoers.d/disable-sudo-lecture
+RUN echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture
 
-RUN echo VARIANT_ID=container >> /etc/os-release
+RUN echo VARIANT_ID=container | tee -a /etc/os-release
 
 # Cleanup
 RUN rm /{extra-packages,missing-docs}

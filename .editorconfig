@@ -1,0 +1,64 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+max_line_length = 80
+#insert_final_newline = true
+
+# git
+[.git*]
+indent_style = tab
+indent_size = 4
+
+# shell scripts
+[**.{sh,bash}]
+charset = utf-8
+end_of_line = lf
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+shell_variant = bash
+
+# Containerfile and Dockerfile
+[{Containerfile,Dockerfile,Dockerfile.template,Dockerfile.sample}]
+indent_style = space
+indent_size = 4
+
+# Makefile
+[{Makefile}]
+indent_style = tab
+indent_size = 4
+
+# just
+[{justfile,.justfile,.justfile.user}]
+indent_style = space
+indent_size = 2
+
+[*.conf]
+indent_style = space
+indent_size = 2
+
+# yaml and toml
+[*.{yml,yaml,toml}]
+indent_style = space
+indent_size = 2
+
+# Matches the exact files either package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
+
+# markdown
+[**.{md,mdx,rst}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
