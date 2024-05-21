@@ -1,10 +1,12 @@
+# Amazon Linux 2023
+# https://public.ecr.aws/amazonlinux/amazonlinux:2023
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 LABEL com.github.containers.toolbox="true" \
-  name="amazonlinux-toolbox" \
+  name="amazonlinux-toolbx" \
   version="2023" \
-  usage="This image is meant to be used with the toolbox command" \
-  summary="Base image for creating Amazon Linux toolbx containers" \
+  usage="This image is meant to be used with the toolbox command." \
+  summary="The base image for creating Amazon Linux 2023 toolbx containers." \
   maintainer="Adam Kaminski <adam@adamkaminski.com>"
 
 COPY missing-docs extra-packages /
@@ -16,11 +18,10 @@ RUN dnf -y swap coreutils-single coreutils-full && \
   dnf -y upgrade --releasever=latest && \
   dnf clean all
 
-# Passwordless sudo
+# sudo without password
 RUN sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers
 RUN echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture
-
 RUN echo VARIANT_ID=container | tee -a /etc/os-release
 
-# Cleanup
+# cleanup
 RUN rm /{extra-packages,missing-docs}

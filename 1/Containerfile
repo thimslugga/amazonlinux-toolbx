@@ -1,11 +1,11 @@
 # Amazon Linux 2
-FROM public.ecr.aws/amazonlinux/amazonlinux:2
+FROM public.ecr.aws/amazonlinux/amazonlinux:1
 
 LABEL com.github.containers.toolbox="true" \
   name="amazonlinux-toolbx" \
-  version="2" \
+  version="1" \
   usage="This image is meant to be used with the toolbox command." \
-  summary="The base image for creating Amazon Linux 2 toolbx containers." \
+  summary="The base image for creating Amazon Linux 1 toolbx containers." \
   maintainer="Adam Kaminski <adam@adamkaminski.com>"
 
 COPY packages extra-packages missing-docs /
