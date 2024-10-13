@@ -1,27 +1,28 @@
+################################################################################
+# Amazon Linux 2 is in maintenance mode at this stage in the distros lifecycle.
+# See: https://aws.amazon.com/amazon-linux-2/faqs/#Amazon_Linux_2_Frequently_Asked_Questions
+################################################################################
+
 # Amazon Linux 2
 FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
 LABEL com.github.containers.toolbox="true" \
-  name="amazonlinux-toolbx" \
-  version="2" \
-  usage="This image is meant to be used with the toolbox command." \
-  summary="The base image for creating Amazon Linux 2 toolbx containers." \
-  maintainer="Adam Kaminski <adam@adamkaminski.com>"
+    name="amazonlinux-toolbx" \
+    version="2" \
+    usage="This image is meant to be used with the toolbox command." \
+    summary="The base image for creating Amazon Linux 2 toolbx containers." \
+    maintainer="Adam Kaminski <adam@adamkaminski.com>"
 
 COPY packages extra-packages missing-docs /
 
-RUN sed -i '/tsflags=nodocs/d' /etc/yum.conf
-RUN yum -y install $(<packages) && \
-  amazon-linux-extras install -y $(<extra-packages) && \
-  yum -y reinstall $(<missing-docs) && \
-  yum -y upgrade && \
-  yum clean all
-
-# sudo without a password
-RUN sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers
-RUN echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture
-RUN echo VARIANT_ID=container | tee -a /etc/os-release
-RUN ln -s /etc/os-release /usr/lib/os-release
-
-# cleanup
-RUN rm /{packages,extra-packages,missing-docs}
+RUN sed -i '/tsflags=nodocs/d' /etc/yum.conf; \
+    yum -y install $(<packages) && \
+    amazon-linux-extras install -y $(<extra-packages) && \
+    yum -y reinstall $(<missing-docs) && \
+    yum -y upgrade && \
+    yum clean all; \
+    sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers && \
+    echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture; \
+    echo VARIANT_ID=container | tee -a /etc/os-release && \
+    ln -s /etc/os-release /usr/lib/os-release; \
+    rm -f /{packages,extra-packages,missing-docs}

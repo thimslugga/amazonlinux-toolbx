@@ -1,21 +1,26 @@
-# Amazon Linux 2
+################################################################################
+# DEPRECATED: Amazon Linux 1 aka 2018.03 is no longer supported by Amazon.
+# See: https://aws.amazon.com/amazon-linux-1/
+################################################################################
+
+# Amazon Linux 1 aka 2018.03
 FROM public.ecr.aws/amazonlinux/amazonlinux:1
 
 LABEL com.github.containers.toolbox="true" \
-  name="amazonlinux-toolbx" \
-  version="1" \
-  usage="This image is meant to be used with the toolbox command." \
-  summary="The base image for creating Amazon Linux 1 toolbx containers." \
-  maintainer="Adam Kaminski <adam@adamkaminski.com>"
+    name="amazonlinux-toolbx" \
+    version="1" \
+    usage="This image is meant to be used with the toolbox command." \
+    summary="The base image for creating Amazon Linux 1 toolbx containers." \
+    maintainer="Adam Kaminski <adam@adamkaminski.com>"
 
 COPY packages extra-packages missing-docs /
 
 RUN sed -i '/tsflags=nodocs/d' /etc/yum.conf
 RUN yum -y install $(<packages) && \
-  amazon-linux-extras install -y $(<extra-packages) && \
-  yum -y reinstall $(<missing-docs) && \
-  yum -y upgrade && \
-  yum clean all
+    amazon-linux-extras install -y $(<extra-packages) && \
+    yum -y reinstall $(<missing-docs) && \
+    yum -y upgrade && \
+    yum clean all
 
 # sudo without a password
 RUN sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers

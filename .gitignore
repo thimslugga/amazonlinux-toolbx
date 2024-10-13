@@ -1,6 +1,14 @@
 # First, ignore everything.
 #/*
 
+### Misc
+dist/
+tmp/
+node_modules/
+manifest.json
+venv/
+env/
+
 ### Linux ###
 *~
 
@@ -24,7 +32,7 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
 
 # Thumbnails
 ._*

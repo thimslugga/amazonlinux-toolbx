@@ -1,49 +1,129 @@
-# justfile
+#!/usr/bin/env just --justfile
+
+################################################################################
+## Settings
+################################################################################
+
+set unstable := false
+set allow-duplicate-recipes := false
+set allow-duplicate-variables := false
+#set positional-arguments := true
+set export := false
+set dotenv-required := false
+set dotenv-load := true
+#set dotenv-path := env_var('PWD')
+set dotenv-filename := ".env"
+
+################################################################################
+## Variables
+################################################################################
+
+project_root      := justfile_directory()
+project_name      := env_var('PROJECT_NAME')
+#timestamp        := `date +%s`
+#commit           := `git show -s --format=%h`
 
 # just --set release 2023 <command>
-release := "2023"
-region := "us-east-1"
-registry := "public.ecr.aws/l6o8q4o8/thimslugga"
+release           := env_var('DEFAULT_RELEASE')
 
-default:
-  @just --summary
+# just --set aws_region us-east-1 <command>
+aws_region        := env_var('DEFAULT_AWS_REGION')
 
+# public.ecr.aws/registry_alias/repository_name:image_tag
+registry              := env_var('OCI_REGISTRY')
+registry_alias        := env_var('OCI_REGISTRY_ALIAS')
+repo_name             := env_var('OCI_REPOSITORY_NAME')
+uri                   := env_var('OCI_URI')
+image_name            := env_var('OCI_NAME')
+cointainer_name       := "amazonlinux-" + release + "-toolbx"
+
+################################################################################
+## Recipes
+################################################################################
+
+# Default recipe (equivalent to 'all' in Makefile).
+# If no default recipe, first recipe will become default.
+
+# Lists the tasks and variables in the justfile.
+@_list:
+    just --justfile {{justfile()}} --list --unsorted
+    echo ""
+    echo "Available variables:"
+    just --evaluate | sed 's/^/    /'
+    echo ""
+    echo "Override variables using 'just key=value ...' (also ALL_UPPERCASE ones)"
+
+# Evaluate and return all just variables
+evaluate:
+    @just --evaluate
+
+# List available recipes
 help:
-  @just --list
+    @just --justfile {{justfile()}} --list
 
-alias m := make
+# Just format
+format:
+    just --justfile {{justfile()}} --fmt
+
+# Return system information
+system-info:
+    @echo "os: {{os()}}"
+    @echo "family: {{os_family()}}"
+    @echo "architecture: {{arch()}}"
+    @echo "home directory: {{ home_directory() }}"
+
+# Build image and create container
 make: build create
 
-alias b := build
+# Build image
 build:
   #!/usr/bin/env bash
-  podman build -t amazonlinux-toolbox:{{release}} \
-    -f $(pwd)/{{release}}/Containerfile $(pwd)/{{release}}/.
+  podman build -t amazonlinux-toolbox:{{ release }} -f $(pwd)/{{ release }}/Containerfile $(pwd)/{{ release }}/.
 
-alias rmi := remove-image
-remove-image:
-  podman rmi amazonlinux-toolbox:{{release}}
-  #toolbox rmi amazonlinux-toolbox:{{release}}
+# Remove image using podman
+rmi:
+  podman rmi {{ image_name }}:{{ release }}
 
-alias c := create
+# Toolbox remove image
+toolbox-rmi:
+  toolbox rmi {{ image_name }}:{{ release }}
+
+# Toolbox create container
 create:
-  toolbox create \
-    -c amznlinux-{{release}}-toolbx \
-    -i amazonlinux-toolbox:{{release}}
+  toolbox create -c amazonlinux-{{ release }}-toolbx -i {{ image_name }}:{{ release }}
 
-alias e := enter
+# Toolbox enter container
 enter:
-  toolbox enter amznlinux-{{release}}-toolbx
+  toolbox enter amazonlinux-{{ release }}-toolbx
 
-alias cu := cleanup
-cleanup:
-  podman stop amznlinux-{{release}}-toolbx
-  toolbox rm amznlinux-{{release}}-toolbx
-  toolbox rmi amazonlinux-toolbox:{{release}}
+# Stop container
+stop:
+  podman stop amazonlinux-{{ release }}-toolbx
 
-alias p := push
+# Remove container
+rm:
+  podman rm amazonlinux-{{ release }}-toolbx
+
+# Toolbox remove container
+toolbox-rm:
+  toolbox rm amazonlinux-{{ release }}-toolbx
+
+# Stop and cleanup container as well as image
+cleanup: stop rm toolbox-rmi
+
+# Push the image to the registry
 push:
-  aws ecr-public get-login-password --region {{region}} | podman login --username AWS --password-stdin public.ecr.aws/l6o8q4o8
-  podman tag thimslugga/amazonlinux-toolbox:{{release}}
-  {{registry}}/amazonlinux-toolbox:{{release}}
-  podman push public.ecr.aws/l6o8q4o8/thimslugga/amazonlinux-toolbox:{{release}}
+  aws ecr-public get-login-password --region {{ aws_region }} | podman login --username AWS --password-stdin public.ecr.aws/l6o8q4o8
+  podman tag thimslugga/amazonlinux-toolbox:{{ release }} {{ uri }}:{{ release }}
+  podman push {{ uri }}/{{ image_name }}:{{ release }}
+
+################################################################################
+## Aliases
+################################################################################
+
+alias m := make
+alias b := build
+alias c := create
+alias e := enter
+alias p := push
+alias cu := cleanup
