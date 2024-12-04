@@ -1,0 +1,107 @@
+[Unit]
+Description=Amazon Linux 2023 distrobox container managed by quadlet
+Documentation=https://github.com/thimslugga/amazonlinux-toolbx
+Documentation=man:podman-systemd.unit(5)
+After=local-fs.target
+#After=network-online.target
+#Wants=network-online.target
+#AssertFileIsExecutable=/usr/bin/distrobox
+
+[Service]
+# Ensure there's a userland podman.sock
+#ExecStartPre=/bin/systemctl --user enable podman.socket
+#ExecStartPre=-/usr/libexec/ptyxis-remove-profile.sh %N
+#ExecStartPost=-/usr/libexec/ptyxis-create-profile.sh %N
+#ExecStop=-/usr/libexec/ptyxis-remove-profile.sh %N
+Restart=always
+RestartSec=5
+StartLimitBurst=5
+# Extend Timeout to allow time to pull the image
+TimeoutStartSec=900
+
+[Container]
+ContainerName=amazonlinux-2023-dbx-quadlet
+HostName=amazonlinux-2023-dbx.%l
+
+# Container image
+Image=quay.io/toolbx-images/amazonlinux-toolbox:2023
+AutoUpdate=registry
+#Pull=never
+
+# Labels
+Label=manager=distrobox
+#Label=distrobox.unshare_groups=1
+#Label=com.github.debarshiray.toolbox=true
+#Label=com.github.debarshiray.toolbox=true
+#Label=architecture=x86_64
+
+Annotation=run.oci.keep_original_groups=1
+#Annotation=run.oci.keep_original_user=1
+
+# Environment variables
+#Environment=USER=%u
+#Environment=USERNAME=%u
+Environment=HOME=%h
+Environment=SHELL=%s
+Environment=XDG_RUNTIME_DIR=%t
+Environment=container=podman
+
+# Extra args
+#Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "0" --pre-init-hooks " " --additional-packages " " -- " "
+Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "0" --pre-init-hooks " " --additional-packages " " -- " \
+  ln -sf /usr/bin/distrobox-host-exec /usr/bin/podman; \
+  ln -sf /usr/bin/distrobox-host-exec /usr/bin/systemctl; \
+  ln -sf /usr/bin/distrobox-host-exec /usr/bin/podman-compose; \
+  ln -sf /usr/bin/distrobox-host-exec /usr/bin/xdg-open; \
+  ln -sf /usr/bin/distrobox-host-exec /usr/bin/buildah; \
+  ln -sf /usr/bin/distrobox-host-exec /usr/bin/flatpak; "
+
+# https://github.com/containers/podman/blob/main/docs/source/markdown/podman-systemd.unit.5.md?plain=1#L266
+PodmanArgs=--entrypoint /usr/bin/entrypoint
+#PodmanArgs=--env SHELL=/usr/bin/zsh
+PodmanArgs=--ipc host
+PodmanArgs=--pid host
+PodmanArgs=--security-opt apparmor=unconfined
+#PodmanArgs=--systemd=always
+
+# Priviledged or you can just use PodmanArgs=-priviledged
+#PodmanArgs=--privileged
+#PodmanArgs=--security-opt label=disable
+Unmask=all
+AddCapability=all
+SeccompProfile=unconfined
+SecurityLabelDisable=true
+
+Ulimit=host
+UserNS=keep-id
+User=root:root
+
+# Logs
+#LogDriver=journald
+
+# Networking
+Network=host
+
+# Mounts
+
+# Volumes
+Volume=/:/run/host:rslave
+Volume=/tmp:/tmp:rslave
+Volume=/usr/bin/distrobox-init:/usr/bin/entrypoint:ro
+Volume=/usr/bin/distrobox-export:/usr/bin/distrobox-export:ro
+Volume=/usr/bin/distrobox-host-exec:/usr/bin/distrobox-host-exec:ro
+Volume=%h:%h:rslave
+Volume=/dev:/dev:rslave
+Volume=/sys:/sys:rslave
+Volume=/dev/pts
+Volume=/dev/null:/dev/ptmx
+Volume=/sys/fs/selinux
+Volume=/var/log/journal
+Volume=/var/home/%u:/var/home/%u:rslave
+Volume=%t:%t:rslave
+Volume=/etc/hosts:/etc/hosts:ro
+Volume=/etc/resolv.conf:/etc/resolv.conf:ro
+
+#[Install]
+# Start on user login
+#WantedBy=graphical-session.target

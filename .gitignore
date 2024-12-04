@@ -6,8 +6,12 @@ dist/
 tmp/
 node_modules/
 manifest.json
+
 venv/
+venvs/
+
 env/
+.env
 
 ### Linux ###
 *~

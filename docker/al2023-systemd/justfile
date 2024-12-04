@@ -1,0 +1,15 @@
+#!/usr/bin/env just --justfile
+
+set shell := ["bash", "-c"]
+
+_default:
+    @just --list
+
+build:
+    podman build . -t amazonlinux2023-systemd -f Containerfile
+
+run:
+    podman run -d --name amazonlinux2023-systemd amazonlinux2023-systemd
+
+run-tty:
+    podman run --tty --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro amazonlinux2023-systemd

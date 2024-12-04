@@ -1,0 +1,84 @@
+[Unit]
+Description=Amazon Linux 2023 toolbx container managed by quadlet
+Documentation=https://github.com/thimslugga/amazonlinux-toolbx
+Documentation=man:podman-systemd.unit(5)
+Documentation=man:toolbox-init-container(1)
+Documentation=man:toolbox(1)
+After=local-fs.target
+#After=network-online.target
+#Wants=network-online.target
+AssertFileIsExecutable=/usr/bin/toolbox
+
+[Service]
+# Ensure there's a userland podman.sock
+#ExecStartPre=/bin/systemctl --user enable podman.socket
+Restart=always
+RestartSec=5
+StartLimitBurst=5
+# Extend Timeout to allow time to pull the image
+TimeoutStartSec=900
+
+[Container]
+ContainerName=amazonlinux-2023-tlbx-quadlet
+HostName=amazonlinux-2023-tlbx
+
+# Container image
+Image=quay.io/toolbx-images/amazonlinux-toolbox:2023
+AutoUpdate=registry
+
+# Labels
+Label=manager=distrobox
+Label=com.github.debarshiray.toolbox=true
+Label=com.github.containers.toolbox=true
+#Label=architecture=x86_64
+
+# Environment variables
+Environment=TOOLBOX_PATH=/usr/bin/toolbox
+Environment=XDG_RUNTIME_DIR=%t
+
+Exec=init-container --gid %G --home %h --shell %s --uid %U --user %u --home-link --media-link --mnt-link
+
+PodmanArgs=--entrypoint toolbox
+PodmanArgs=--cgroupns host
+PodmanArgs=--ipc host
+PodmanArgs=--no-hosts
+PodmanArgs=--pid host
+#PodmanArgs=--label com.github.containers.toolbox=true
+
+# Priviledged or you can just use PodmanArgs=-priviledged
+#PodmanArgs=--privileged
+#PodmanArgs=--security-opt label=disable
+Unmask=all
+AddCapability=all
+SeccompProfile=unconfined
+SecurityLabelDisable=true
+
+Ulimit=host
+UserNS=keep-id
+User=root:root
+
+# Logs
+#LogDriver=journald
+
+# Mounts
+Mount=type=devpts,destination=/dev/pts
+
+# Volumes
+Volume=/:/run/host:rslave
+Volume=/dev:/dev:rslave
+Volume=/run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+Volume=/var/%h:/var/%h:rslave
+Volume=/usr/bin/toolbox:/usr/bin/toolbox:ro
+Volume=%t:%t
+Volume=/run/avahi-daemon/socket:/run/avahi-daemon/socket
+Volume=/run/.heim_org.h5l.kcm-socket:/run/.heim_org.h5l.kcm-socket
+Volume=/run/pcscd/pcscd.comm:/run/pcscd/pcscd.comm
+Volume=/run/media:/run/media:rslave
+Volume=/etc/profile.d/toolbox.sh:/etc/profile.d/toolbox.sh:ro
+
+# Networking
+Network=host
+
+#[Install]
+# Start on user login
+#WantedBy=graphical-session.target

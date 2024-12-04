@@ -1,0 +1,12 @@
+[Unit]
+Description=Run setup scripts on first start of container
+After=network-online.target
+After=sssd.service
+ConditionPathExists=!/etc/initial-setup.done
+
+[Service]
+Type=oneshot
+ExecStart=/etc/initial-setup.sh
+
+[Install]
+WantedBy=multi-user.target

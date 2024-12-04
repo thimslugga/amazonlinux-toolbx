@@ -13,20 +13,14 @@ LABEL com.github.containers.toolbox="true" \
     summary="The base image for creating Amazon Linux 1 toolbx containers." \
     maintainer="Adam Kaminski <adam@adamkaminski.com>"
 
-COPY packages extra-packages missing-docs /
+#COPY packages missing-docs /
 
-RUN sed -i '/tsflags=nodocs/d' /etc/yum.conf
-RUN yum -y install $(<packages) && \
-    amazon-linux-extras install -y $(<extra-packages) && \
-    yum -y reinstall $(<missing-docs) && \
+RUN sed -i '/tsflags=nodocs/d' /etc/yum.conf && \
+    yum -y install $(<packages) && \
     yum -y upgrade && \
-    yum clean all
-
-# sudo without a password
-RUN sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers
-RUN echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture
-RUN echo VARIANT_ID=container | tee -a /etc/os-release
-RUN ln -s /etc/os-release /usr/lib/os-release
-
-# cleanup
-RUN rm /{packages,extra-packages,missing-docs}
+    yum clean all && \
+    rm -rf /var/cache/yum && \
+    sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers && \
+    echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture && \
+    echo VARIANT_ID=container | tee -a /etc/os-release && \
+    ln -s /etc/os-release /usr/lib/os-release

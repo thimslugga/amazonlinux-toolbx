@@ -4,6 +4,7 @@
 ################################################################################
 
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
+#FROM public.ecr.aws/amazonlinux/amazonlinux:2023 as builder
 
 LABEL com.github.containers.toolbox="true" \
     name="amazonlinux-toolbx" \
@@ -12,15 +13,34 @@ LABEL com.github.containers.toolbox="true" \
     summary="The base image for creating Amazon Linux 2023 toolbx containers." \
     maintainer="Adam Kaminski <adam@adamkaminski.com>"
 
-COPY missing-docs extra-packages /
+COPY packages missing-docs /
 
-RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf; \
-    dnf -y swap coreutils-single coreutils-full && \
-    dnf -y reinstall $(<missing-docs) && \
-    dnf -y install --allowerasing $(<extra-packages) && \
-    dnf -y upgrade --releasever=latest && \
-    dnf clean all; \
-    sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers && \
-    echo 'Defaults lecture="never"' | tee /etc/sudoers.d/disable-sudo-lecture; \
-    echo VARIANT_ID=container | tee -a /etc/os-release && \
-    rm -f /{extra-packages,missing-docs}
+#RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf; \
+#    touch /etc/dnf/vars/releasever && echo 'latest' > /etc/dnf/vars/releasever; \
+#    dnf -y swap coreutils-single coreutils-full && \
+#    dnf -y reinstall $(<missing-docs) && \
+#    dnf -y install --allowerasing $(<extra-packages) && \
+#    dnf -y upgrade --refresh --releasever=latest && \
+#    rm -rf /var/cache/dnf/* && dnf clean all; \
+#    sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers && \
+#    echo 'Defaults lecture="never"' > /etc/sudoers.d/disable-sudo-lecture; \
+#    echo VARIANT_ID=container >> /etc/os-release && \
+#    rm -f /{extra-packages,missing-docs}
+
+# Combine all DNF operations into a single layer to reduce image size
+RUN set -ex \
+    && sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf \
+    && echo 'latest' > /etc/dnf/vars/releasever \
+    && dnf -y swap coreutils-single coreutils-full \
+    && dnf -y reinstall $(<missing-docs) \
+    && dnf -y install --allowerasing --setopt=install_weak_deps=False $(<packages) \
+    && dnf -y upgrade --refresh --allowerasing --releasever=latest \
+    && dnf clean all \
+    && rm -rf /var/cache/dnf/* \
+    && sed -i -e 's/ ALL$/ NOPASSWD:ALL/' /etc/sudoers \
+    && echo 'Defaults lecture="never"' > /etc/sudoers.d/disable-sudo-lecture \
+    && echo VARIANT_ID=container >> /etc/os-release \
+    && rm -f /{packages,missing-docs}
+
+# New fresh container to minimize dependencies
+#FROM builder

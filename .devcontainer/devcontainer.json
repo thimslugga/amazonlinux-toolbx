@@ -1,0 +1,53 @@
+{
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": "."
+  },
+  "name": "Amazon Linux 2023 Devcontainer Environment",
+	//"image": "public.ecr.aws/amazonlinux/amazonlinux:2023",
+  "runArgs": [
+    "--userns=keep-id:uid=1000,gid=1000"
+  ],
+  // the value needs to match the value of "remoteUser"
+  "containerUser": "vscode",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+	"workspaceFolder": "/workspace",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,Z",
+  "containerEnv": {
+    "HOME": "/home/vscode"
+  },
+  "mounts": [
+    "source=profile,target=/root,type=volume",
+    "target=/root/.vscode-server,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "amazonwebservices.aws-toolkit-vscode",
+        "golang.go",
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml",
+        "redhat.vscode-xml",
+        "vadimcn.vscode-lldb",
+        "formulahendry.code-runner",
+        "EditorConfig.EditorConfig",
+        "dotenv.dotenv-vscode",
+        "esbenp.prettier-vscode",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.makefile-tools",
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        "mbehr1.vsc-lfs",
+        "donjayamanne.githistory",
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+        "dakara.dakara-foldplus",
+        "oderwat.indent-rainbow"
+      ]
+    }
+  }
+  //"postCreateCommand": "sh .devcontainer/deploy.sh"
+  //"shutdownAction": "stopContainer"
+}

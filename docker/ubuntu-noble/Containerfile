@@ -1,0 +1,17 @@
+FROM docker.io/ubuntu:24.04
+#FROM docker.io/library/ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+COPY extra-packages /
+
+#RUN rm -f /etc/apt/apt.conf.d/docker-*; \
+#    yes | unminimize;
+
+RUN set -eux; \
+    DEBIAN_FRONTEND=noninteractive apt-get update -qy && \
+    apt-get install -qy --no-install-recommends \
+    $(grep -v '^#' /extra-packages | xargs -n1) && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*; rm -f /extra-packages; \
+    rm /bin/sh && ln -s /bin/bash /bin/sh;

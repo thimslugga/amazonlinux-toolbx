@@ -1,4 +1,4 @@
+python3.8
+vim
 # epel for rhel 7.x is no longer supported upstream.
 #epel
-vim
-python3.8

@@ -1,7 +1,6 @@
 # Amazon Linux Toolbox Images
 
-Community maintained Amazon Linux container images for use with 
-[toolbx](https://github.com/containers/toolbox) and [distrobox](https://github.com/89luca89/distrobox).
+Custom Amazon Linux container images for use with [toolbx](https://github.com/containers/toolbox) and [distrobox](https://github.com/89luca89/distrobox).
 
 ## Table of Contents
 
@@ -13,23 +12,36 @@ Community maintained Amazon Linux container images for use with
 ## Features
 
 - Container images based on Amazon Linux 2023 or Amazon Linux 2.
-- Images can be easily created using [just](https://github.com/casey/just).
+- Easily create and manage containers using [just](https://github.com/casey/just).
+- Supports [toolbx](https://github.com/containers/toolbox) and [distrobox](https://github.com/89luca89/distrobox).
 
 ## Getting Started
 
-For Amazon Linux 2023:
+**Amazon Linux 2023:**
 
-```bash
+```sh
 just --set release 2023 build
 just --set release 2023 create
 just --set release 2023 enter
 ```
 
-For Amazon Linux 2:
+**Amazon Linux 2:**
 
-```bash
+Build image:
+
+```sh
 just --set release 2 build
+```
+
+Create container:
+
+```sh
 just --set release 2 create
+```
+
+Enter container:
+
+```sh
 just --set release 2 enter
 ```
 
@@ -40,4 +52,3 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-

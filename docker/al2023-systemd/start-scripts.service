@@ -1,0 +1,12 @@
+[Unit]
+Description=Run scripts on container start
+After=network-online.target
+After=sssd.service
+After=initial-setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/start-scripts.sh
+
+[Install]
+WantedBy=multi-user.target

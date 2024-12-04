@@ -9,12 +9,13 @@ dnf-plugin-support-info
 dnf-utils
 findutils
 git
-gnupg
+gnupg2
 gnupg2-smime
 hostname
 iproute
 iputils
 keyutils
+krb5-libs
 less
 lsof
 man-db
